@@ -12,6 +12,7 @@ typedef NS_ENUM(NSUInteger, IntroGuideType) {
     IntroGuideType_1,
     IntroGuideType_2,
     IntroGuideType_3,
+    IntroGuideType_4,//自定义
 };
 @interface ViewController : UIViewController
 @property (nonatomic, assign) IntroGuideType type;

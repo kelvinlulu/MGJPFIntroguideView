@@ -68,6 +68,15 @@ static  NSString * const introGuideImgUrl = @"http://s17.mogucdn.com/p1/160620/u
                 self.coachMarksView.guideShape = MGJPFIntroGuideShape_Other;
                 break;
             }
+            case IntroGuideType_4:{
+                UIBezierPath *path = [UIBezierPath bezierPath];
+                [path moveToPoint:CGPointMake(0, 0)];
+                [path addLineToPoint:CGPointMake(40, 0)];
+                [path addLineToPoint:CGPointMake(20, 40)];
+                [path closePath];
+                self.coachMarksView.shapePath = path;
+                break;
+            }
         }
         self.coachMarksShown = YES;
         [self.introduceArray addObject:self.navigationItem.titleView];

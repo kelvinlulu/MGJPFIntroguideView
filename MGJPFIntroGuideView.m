@@ -422,6 +422,7 @@ CG_INLINE BOOL MGJPF_IS_EMPTY(id thing) {
 }
 
 #pragma mark - Cutout modify
+
 - (void)animateGuideImgae:(UIImage *)guideImage withPoint:(CGPoint)point {
     self.guideImageView.image = guideImage;
     [self.guideImageView sizeToFit];
@@ -433,30 +434,12 @@ CG_INLINE BOOL MGJPF_IS_EMPTY(id thing) {
     }
     self.guideImageView.frame = (CGRect) {point,self.guideImageView.frame.size};
 }
-- (void)animateCutoutToRect:(CGRect)rect withShape:(MGJPFIntroGuideShape)shape {
+
+- (void)animateCutoutToRect:(CGRect)rect withShapePath:(UIBezierPath *)shapePath
+{
     // Define shape
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRect:self.bounds];
-    UIBezierPath *cutoutPath;
-    switch (shape) {
-        case MGJPFIntroGuideShape_Square: {
-            cutoutPath = [UIBezierPath bezierPathWithRect:rect];
-            break;
-        }
-        case MGJPFIntroGuideShape_Circle: {
-            cutoutPath = [UIBezierPath bezierPathWithOvalInRect:rect];
-            break;
-        }
-        case MGJPFIntroGuideShape_Star: {
-            cutoutPath = [UIBezierPath bezierPathWithStarInRect:rect];
-            break;
-        }
-        case MGJPFIntroGuideShape_Other: {
-            cutoutPath = [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:self.cutoutRadius];
-            break;
-        }
-    }
-    
-    [maskPath appendPath:cutoutPath];
+    [maskPath appendPath:shapePath];
     
     // Animate it
     CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"path"];
@@ -470,6 +453,25 @@ CG_INLINE BOOL MGJPF_IS_EMPTY(id thing) {
     [self.mask addAnimation:anim forKey:@"path"];
     self.mask.path = maskPath.CGPath;
 }
+
+- (UIBezierPath *)getShapePathWithShapeType:(MGJPFIntroGuideShape)shape WithRect:(CGRect)rect
+{
+    switch (shape) {
+        case MGJPFIntroGuideShape_Square: {
+            return [UIBezierPath bezierPathWithRect:rect];
+        }
+        case MGJPFIntroGuideShape_Circle: {
+            return [UIBezierPath bezierPathWithOvalInRect:rect];
+        }
+        case MGJPFIntroGuideShape_Star: {
+            return [UIBezierPath bezierPathWithStarInRect:rect];
+        }
+        case MGJPFIntroGuideShape_Other: {
+            return [UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:self.cutoutRadius];
+        }
+    }
+}
+
 - (void)animateCaptionLabelWith:(NSString *)description withRect:(CGRect)markRect {
     self.lblCaption.alpha = 0.0f;
     self.lblCaption.frame = (CGRect) {{0.0f, 0.0f}, {self.maxLblWidth, 0.0f}};
@@ -490,6 +492,7 @@ CG_INLINE BOOL MGJPF_IS_EMPTY(id thing) {
         self.lblCaption.alpha = 1.0f;
     }];
 }
+
 #pragma mark - private Method
 //进行展示的主要函数
 - (void)goToCoachMarkIndexed:(NSUInteger)index {
@@ -536,8 +539,18 @@ CG_INLINE BOOL MGJPF_IS_EMPTY(id thing) {
     [self animateGuideImgae:guideImage withPoint:point];
     // 运行标签动画
     [self animateCaptionLabelWith:markCaption withRect:markRect];
+    UIBezierPath *cutoutPath;
+    if (_shapePath) {
+        cutoutPath = [_shapePath copy];
+        CGFloat scaleX = CGRectGetWidth(markRect)/CGRectGetWidth(cutoutPath.bounds);
+        CGFloat scaleY = CGRectGetHeight(markRect)/CGRectGetHeight(cutoutPath.bounds);
+        [cutoutPath applyTransform:CGAffineTransformMakeScale(scaleX, scaleY)];
+        [cutoutPath applyTransform:CGAffineTransformMakeTranslation(markRect.origin.x - cutoutPath.bounds.origin.x,markRect.origin.y - cutoutPath.bounds.origin.y)];
+    } else {
+        cutoutPath = [self getShapePathWithShapeType:shape WithRect:markRect];
+    }
     // 运行展示动画
-    [self animateCutoutToRect:markRect withShape:shape];
+    [self animateCutoutToRect:markRect withShapePath:cutoutPath];
     if (self.enableContinueLabel) {
         //当第一次展现时出现
         if (markIndex == 0) {

@@ -19,7 +19,7 @@
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    return 5;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -35,6 +35,9 @@
     }
     if (indexPath.row == 3) {
         cell.textLabel.text = @"其他";
+    }
+    if (indexPath.row == 4) {
+        cell.textLabel.text = @"自定义形状";
     }
 
     return cell;
@@ -53,6 +56,9 @@
     }
     if (indexPath.row == 3) {
         vc.type = IntroGuideType_3;
+    }
+    if (indexPath.row == 4) {
+        vc.type = IntroGuideType_4;
     }
     [self.navigationController pushViewController:vc animated:YES];
 }

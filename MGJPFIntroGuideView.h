@@ -68,7 +68,8 @@ typedef void(^MGJPFWillNavigateBlock)(MGJPFIntroGuideView *guideView, NSUInteger
 @property (nonatomic, copy) MGJPFWillNavigateBlock willNavgateBlock;
 /**  遮盖跳转完成时回调，可根据需求选择delegate或是block*/
 @property (nonatomic, copy) MGJPFWillNavigateBlock didNavgateBlock;
-
+/**  自定义shapePath*/
+@property (nonatomic, strong) UIBezierPath *shapePath;
 /**
  *  根据传入的复合字典数组创建引导页
  *
