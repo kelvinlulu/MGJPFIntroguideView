@@ -725,6 +725,12 @@ CG_INLINE BOOL MGJPF_IS_EMPTY(id thing) {
     [self.mask setFillColor:[maskColor CGColor]];
 }
 
+- (void)setGuideShape:(MGJPFIntroGuideShape)guideShape
+{
+    _guideShape = guideShape;
+    _shapePath = nil;
+}
+
 - (UIButton *)btnSkipCoach {
     if (!_btnSkipCoach) {
         CGFloat lblContinueWidth = self.enableSkipButton ? (70.0/100.0) * self.bounds.size.width : self.bounds.size.width;
